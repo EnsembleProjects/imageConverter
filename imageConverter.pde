@@ -1,8 +1,11 @@
 PImage originals[];  //storing the images like this isn't actually necessary, just for debug drawing
 PImage converted[];
 
-int cAryWid = 12;
+//Liz - change the 2 values below to change the ratio of the 2D array
+//IMPORTANT: ensure it matches the values in ExhibitController AND the ratios of the cropped images you feed into this program
+int cAryWid = 12; 
 int cAryHei = 10;
+
 int windWid = 360;   //height determined automatically to fit 12:10 ratio
   
 String oriPath = "racecourse/cropped/";
@@ -22,7 +25,7 @@ void setup(){
     originals[i] = loadImage(oriPath + fNames[i] + ".png");
     converted[i] = deRes(originals[i]);
     //String outName = (oriPath + "output/out_" + fNames[i] + ".png");
-    converted[i].save("C:/Users/JETho/Documents/Processing/edCode/PROJ_imgIntoClipArray/imgIntoClipArray_v4_2/output/pixels" + (i+1) + ".png");
+    converted[i].save("output/pixels" + (i+1) + ".png");
   }
 }
 
@@ -56,14 +59,14 @@ PImage deRes(PImage ori){
   
   //below try to detect incorrect ratios, however sometimes trying to use incorrect ratios will just cause a crash anyway; so best not to.
   float imgRatio = float(ori.width)/float(ori.height);
-  if (imgRatio != float(cAryWid)/float(cAryHei)) println("Ratio not correct, clip mapping will contain errors\nImage ratio = " + imgRatio); 
+  if (imgRatio != float(cAryWid)/float(cAryHei)) println("Ratio not correct, clip mapping may contain errors\nImage ratio = " + imgRatio); 
   
   int pixPerX = ori.height/cAryHei;   //how many pixels will make up the width and height of each quadrant
   int pixPerY = ori.width/cAryWid;
   
   //println("ppX: " + clipWidOutput + " | ppY: " + clipHeiOutput);  
   color[] avgCols = new color[cAryWid*cAryHei];      //this will be the key output of the function
-  PImage newImg = createImage(12, 10, RGB);          //makes a new image to store these avgCols into once they are found
+  PImage newImg = createImage(cAryWid, cAryHei, RGB);          //makes a new image to store these avgCols into once they are found
   newImg.loadPixels();
   
   int outerCount = 0;                                //used to address the quadrant
@@ -116,8 +119,8 @@ void drawEnlarged(PImage img){
   img.loadPixels();
   noStroke();
   for (int i = 0; i < img.pixels.length; i++){
-    int x = i % 12;
-    int y = (i/12) % 10;
+    int x = i % cAryWid;
+    int y = (i/cAryWid) % cAryHei;
     //println(i + " | x: " + x + " | y: " + y);
     fill(img.get(x, y));
     rect(x*clipWidOut, y*clipHeiOut, clipWidOut, clipHeiOut);
